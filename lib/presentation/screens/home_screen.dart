@@ -60,6 +60,19 @@ class HomeScreen extends ConsumerWidget {
                     child: const Text('Start New Split'),
                   ),
                 ),
+                const SizedBox(height: 16),
+                // Scan Receipt Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/scan-receipt'),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Scan Receipt'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 48),
                 // Recent Splits Section
                 if (recentSplits.isNotEmpty) ...[
