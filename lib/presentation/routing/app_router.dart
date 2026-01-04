@@ -4,6 +4,7 @@ import '../screens/new_split_flow.dart';
 import '../screens/split_detail_screen.dart';
 import '../screens/manage_people_screen.dart';
 import '../screens/receipt_scan_screen.dart';
+import '../screens/new_bill_screen.dart';
 
 /// App router configuration.
 final appRouter = GoRouter(
@@ -31,6 +32,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/scan-receipt',
       builder: (context, state) => const ReceiptScanScreen(),
+    ),
+    GoRoute(
+      path: '/new-bill',
+      builder: (context, state) => const NewBillScreen(),
     ),
   ],
 );

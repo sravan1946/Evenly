@@ -27,11 +27,64 @@ class HomeScreen extends ConsumerWidget {
     }
   }
 
+  /// Builds a beautiful gradient FAB for creating new bills.
+  Widget _buildFAB(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.push('/new-bill'),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.add,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'New Bill',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recentSplits = ref.watch(recentSplitsProvider);
 
     return Scaffold(
+      floatingActionButton: _buildFAB(context),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -68,6 +121,19 @@ class HomeScreen extends ConsumerWidget {
                     onPressed: () => context.push('/scan-receipt'),
                     icon: const Icon(Icons.camera_alt),
                     label: const Text('Scan Receipt'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Manual Entry Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/new-bill'),
+                    icon: const Icon(Icons.edit_note),
+                    label: const Text('Manual Entry'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
