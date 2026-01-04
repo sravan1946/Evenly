@@ -102,7 +102,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 48),
-                // Start New Split Button
+                // Start New Split Button (Primary Action)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -134,6 +134,13 @@ class HomeScreen extends ConsumerWidget {
                     onPressed: () => context.push('/new-bill'),
                     icon: const Icon(Icons.edit_note),
                     label: const Text('Manual Entry'),
+                // Manage Friends Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/manage-people'),
+                    icon: const Icon(Icons.people),
+                    label: const Text('Manage Friends'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
