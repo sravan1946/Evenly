@@ -49,7 +49,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                 ),
                 const SizedBox(height: 48),
-                // Start New Split Button
+                // Start New Split Button (Primary Action)
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -58,6 +58,32 @@ class HomeScreen extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: const Text('Start New Split'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Scan Receipt Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/scan-receipt'),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Scan Receipt'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Manage Friends Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/manage-people'),
+                    icon: const Icon(Icons.people),
+                    label: const Text('Manage Friends'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 48),

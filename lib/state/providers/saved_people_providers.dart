@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/saved_person.dart';
 import '../../data/local/hive_service.dart';
+import '../../core/utils/avatar_colors.dart';
 
-/// Provider for saved people.
+/// Provider for saved people/friends.
 final savedPeopleProvider =
     StateNotifierProvider<SavedPeopleNotifier, List<SavedPerson>>((ref) {
   final notifier = SavedPeopleNotifier();
@@ -10,7 +11,7 @@ final savedPeopleProvider =
   return notifier;
 });
 
-/// State notifier for managing saved people.
+/// State notifier for managing saved friends.
 class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
   SavedPeopleNotifier() : super([]);
 
@@ -32,12 +33,13 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
     } else {
       people.add(person);
     }
-    state = people;
+    state = people..sort((a, b) => b.useCount.compareTo(a.useCount));
     await _saveToStorage();
   }
 
   /// Adds a person by name (creates new or increments use count).
-  Future<void> addPersonByName(String name) async {
+  /// Automatically assigns an avatar color based on the name.
+  Future<void> addPersonByName(String name, {int? customColor}) async {
     if (name.trim().isEmpty) return;
 
     final trimmedName = name.trim();
@@ -51,12 +53,14 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
     );
 
     if (existing.id.isEmpty) {
-      // New person
+      // New person - assign avatar color
+      final avatarColor = customColor ?? AvatarColors.getColorForName(trimmedName);
       final person = SavedPerson(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: trimmedName,
         createdAt: DateTime.now(),
         useCount: 1,
+        avatarColor: avatarColor,
       );
       await savePerson(person);
     } else {
@@ -65,10 +69,43 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
     }
   }
 
+  /// Updates an existing person's details.
+  Future<void> updatePerson({
+    required String id,
+    String? name,
+    int? avatarColor,
+  }) async {
+    final index = state.indexWhere((p) => p.id == id);
+    if (index < 0) return;
+
+    final person = state[index];
+    final updatedPerson = person.copyWith(
+      name: name ?? person.name,
+      avatarColor: avatarColor ?? person.avatarColor,
+    );
+    await savePerson(updatedPerson);
+  }
+
   /// Deletes a saved person.
   Future<void> deletePerson(String id) async {
     state = state.where((p) => p.id != id).toList();
     await _saveToStorage();
+  }
+
+  /// Gets a person by ID.
+  SavedPerson? getPersonById(String id) {
+    try {
+      return state.firstWhere((p) => p.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Searches people by name.
+  List<SavedPerson> searchByName(String query) {
+    if (query.isEmpty) return state;
+    final lowerQuery = query.toLowerCase();
+    return state.where((p) => p.name.toLowerCase().contains(lowerQuery)).toList();
   }
 
   Future<void> _saveToStorage() async {
@@ -76,3 +113,4 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
     await HiveService.savePeople(jsonList);
   }
 }
+
