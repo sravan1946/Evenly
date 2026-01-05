@@ -1,3 +1,5 @@
+import 'package:evenly/core/utils/utils.dart';
+import 'package:evenly/state/providers/preferences_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,16 +10,9 @@ import '../../widgets/split_summary_card.dart';
 
 /// Step 5: Review and save.
 class ReviewStep extends ConsumerWidget {
-  const ReviewStep({
-    super.key,
-    required this.onBack,
-  });
+  const ReviewStep({super.key, required this.onBack});
 
   final VoidCallback onBack;
-
-  String _formatPrice(double price) {
-    return '\$${price.toStringAsFixed(2)}';
-  }
 
   Future<void> _handleSave(BuildContext context, WidgetRef ref) async {
     final notifier = ref.read(currentSplitProvider.notifier);
@@ -37,6 +32,7 @@ class ReviewStep extends ConsumerWidget {
     final split = ref.watch(currentSplitProvider);
     final itemizedAmounts = ref.watch(itemizedCalculationProvider);
     final evenAmounts = ref.watch(evenCalculationProvider);
+    final prefs = ref.watch(preferencesProvider);
     final total = ref.watch(totalAmountProvider);
 
     if (split == null) {
@@ -56,20 +52,20 @@ class ReviewStep extends ConsumerWidget {
           Text(
             'Review',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'Check everything looks good',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  height: 1.5,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 40),
-          
+
           // Total Amount Card
           FrostedCard(
             margin: EdgeInsets.zero,
@@ -79,37 +75,37 @@ class ReviewStep extends ConsumerWidget {
                 Text(
                   'Total Amount',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  _formatPrice(total),
+                  "${getCurrencyPrefix(prefs.currency)}$total",
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                        letterSpacing: -1,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                    letterSpacing: -1,
+                  ),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Split Method Toggle
           FrostedCard(
             margin: EdgeInsets.zero,
             padding: const EdgeInsets.all(20),
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Split Method',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SegmentedButton<SplitMethod>(
                   segments: const [
@@ -117,33 +113,32 @@ class ReviewStep extends ConsumerWidget {
                       value: SplitMethod.itemized,
                       label: Text('Itemized'),
                     ),
-                    ButtonSegment(
-                      value: SplitMethod.even,
-                      label: Text('Even'),
-                    ),
+                    ButtonSegment(value: SplitMethod.even, label: Text('Even')),
                   ],
                   selected: {split.method},
                   onSelectionChanged: (Set<SplitMethod> newSelection) {
                     if (newSelection.first != split.method) {
-                      ref.read(currentSplitProvider.notifier).toggleSplitMethod();
+                      ref
+                          .read(currentSplitProvider.notifier)
+                          .toggleSplitMethod();
                     }
                   },
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Participants List
           Text(
             'Amounts Owed',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
-          
+
           ...split.participants.map((participant) {
             final amount = amounts[participant.id] ?? 0.0;
             return Padding(
@@ -151,12 +146,13 @@ class ReviewStep extends ConsumerWidget {
               child: SplitSummaryCard(
                 participant: participant,
                 amount: amount,
+                currency: getCurrencyPrefix(prefs.currency),
               ),
             );
           }),
-          
+
           const SizedBox(height: 48),
-          
+
           // Navigation Buttons
           Row(
             children: [
@@ -189,7 +185,7 @@ class ReviewStep extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
         ],
       ),

@@ -18,12 +18,12 @@ class ItemRow extends StatelessWidget {
   final bool showAssignments;
 
   String _formatPrice(double price) {
-    return '\$${price.toStringAsFixed(2)}';
+    return '${item.currency} ${price.toStringAsFixed(2)}';
   }
 
   String _formatTotalPrice() {
     final total = item.price * item.quantity;
-    return '\$${total.toStringAsFixed(2)}';
+    return '${item.currency} ${total.toStringAsFixed(2)}';
   }
 
   List<String> _getParticipantNames() {
@@ -38,16 +38,13 @@ class ItemRow extends StatelessWidget {
     final participantNames = showAssignments ? _getParticipantNames() : [];
 
     return ListTile(
-      title: Text(
-        item.name,
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
+      title: Text(item.name, style: Theme.of(context).textTheme.bodyLarge),
       subtitle: participantNames.isNotEmpty
           ? Text(
               participantNames.join(', '),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                color: Theme.of(context).colorScheme.primary,
+              ),
             )
           : null,
       trailing: Column(
@@ -58,14 +55,14 @@ class ItemRow extends StatelessWidget {
             Text(
               '${item.quantity}x ${_formatPrice(item.price)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           Text(
             _formatTotalPrice(),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
       ),

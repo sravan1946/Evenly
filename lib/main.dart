@@ -8,11 +8,7 @@ import 'state/providers/preferences_providers.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init();
-  runApp(
-    const ProviderScope(
-      child: EvenlyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: EvenlyApp()));
 }
 
 class EvenlyApp extends StatelessWidget {

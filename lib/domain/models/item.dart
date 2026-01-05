@@ -10,6 +10,7 @@ class Item with _$Item {
     required String id,
     required String name,
     required double price,
+    @Default("\$") String currency,
     @Default(1) int quantity,
     @Default([]) List<String> assignedTo,
   }) = _Item;

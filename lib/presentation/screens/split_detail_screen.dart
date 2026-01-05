@@ -8,10 +8,7 @@ import '../widgets/split_summary_card.dart';
 
 /// Screen showing details of a saved split.
 class SplitDetailScreen extends ConsumerWidget {
-  const SplitDetailScreen({
-    super.key,
-    required this.splitId,
-  });
+  const SplitDetailScreen({super.key, required this.splitId});
 
   final String splitId;
 
@@ -28,6 +25,7 @@ class SplitDetailScreen extends ConsumerWidget {
     );
 
     final itemizedAmounts = SplitCalculator.calculateItemizedSplit(split);
+    final currency = split.items.first.currency;
     final evenAmounts = SplitCalculator.calculateEvenSplit(split);
     final total = SplitCalculator.getTotalAmount(split);
 
@@ -36,9 +34,7 @@ class SplitDetailScreen extends ConsumerWidget {
         : evenAmounts;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(split.name ?? 'Split Details'),
-      ),
+      appBar: AppBar(title: Text(split.name ?? 'Split Details')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -52,34 +48,33 @@ class SplitDetailScreen extends ConsumerWidget {
                   Text(
                     'Total',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _formatPrice(total),
+                    "$currency$total",
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
             // Amounts Owed
-            Text(
-              'Amounts Owed',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text('Amounts Owed', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             ...split.participants.map((participant) {
               final amount = amounts[participant.id] ?? 0.0;
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: SplitSummaryCard(
                   participant: participant,
                   amount: amount,
+                  currency: currency,
                 ),
               );
             }),

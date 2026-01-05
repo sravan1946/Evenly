@@ -1,3 +1,5 @@
+import 'package:evenly/core/utils/utils.dart';
+import 'package:evenly/state/providers/preferences_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,11 +9,7 @@ import '../../widgets/item_row.dart';
 
 /// Step 3: Add items.
 class AddItemsStep extends ConsumerStatefulWidget {
-  const AddItemsStep({
-    super.key,
-    required this.onNext,
-    required this.onBack,
-  });
+  const AddItemsStep({super.key, required this.onNext, required this.onBack});
 
   final VoidCallback onNext;
   final VoidCallback onBack;
@@ -33,18 +31,17 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
     super.dispose();
   }
 
-  void _addItem() {
+  void _addItem(String currency) {
     final name = _nameController.text;
-    // Remove $ prefix if user typed it, but keep only one
+    // Remove currency prefix if user typed it, but keep only one
     String priceText = _priceController.text.trim();
-    if (priceText.startsWith('\$')) {
-      priceText = priceText.substring(1).trim();
-    }
     final price = double.tryParse(priceText);
     final quantity = int.tryParse(_quantityController.text) ?? 1;
 
     if (name.trim().isNotEmpty && price != null && price > 0 && quantity > 0) {
-      ref.read(currentSplitProvider.notifier).addItem(name, price, quantity: quantity);
+      ref
+          .read(currentSplitProvider.notifier)
+          .addItem(name, price, quantity: quantity, currency: currency);
       _nameController.clear();
       _priceController.clear();
       _quantityController.text = '1';
@@ -56,15 +53,16 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
     if (split?.items.isNotEmpty == true) {
       widget.onNext();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Add at least one item')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Add at least one item')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final split = ref.watch(currentSplitProvider);
+    final preferences = ref.watch(preferencesProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -75,20 +73,20 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
           Text(
             'Add Items',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'What did you buy?',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  height: 1.5,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 32),
-          
+
           // Input Card
           FrostedCard(
             margin: EdgeInsets.zero,
@@ -111,7 +109,7 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Quantity and Price Row
                 Row(
                   children: [
@@ -147,7 +145,7 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           prefix: Text(
-                            '\$',
+                            getCurrencyPrefix(preferences.currency),
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           filled: true,
@@ -162,7 +160,8 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
                           ),
                         ],
                         style: Theme.of(context).textTheme.bodyLarge,
-                        onSubmitted: (_) => _addItem(),
+                        onSubmitted: (_) =>
+                            _addItem(getCurrencyPrefix(preferences.currency)),
                       ),
                     ),
                   ],
@@ -170,14 +169,15 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Add Button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: _addItem,
+              onPressed: () =>
+                  _addItem(getCurrencyPrefix(preferences.currency)),
               icon: const Icon(Icons.add_shopping_cart, size: 20),
               label: const Text('Add Item'),
               style: ElevatedButton.styleFrom(
@@ -188,16 +188,16 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Items List
           if (split?.items.isNotEmpty == true) ...[
             Text(
               'Items (${split!.items.length})',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             ...split.items.map((item) {
@@ -234,16 +234,16 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
                     Text(
                       'No items yet',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-          
+
           const SizedBox(height: 48),
-          
+
           // Navigation Buttons
           Row(
             children: [
@@ -275,7 +275,7 @@ class _AddItemsStepState extends ConsumerState<AddItemsStep> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
         ],
       ),

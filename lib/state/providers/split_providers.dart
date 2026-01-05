@@ -6,8 +6,9 @@ import '../../domain/services/split_calculator.dart';
 import '../../data/local/hive_service.dart';
 
 /// Provider for all splits (history).
-final splitsProvider =
-    StateNotifierProvider<SplitsNotifier, List<Split>>((ref) {
+final splitsProvider = StateNotifierProvider<SplitsNotifier, List<Split>>((
+  ref,
+) {
   final notifier = SplitsNotifier();
   notifier.loadSplits();
   return notifier;
@@ -16,8 +17,8 @@ final splitsProvider =
 /// Provider for the current split being created/edited.
 final currentSplitProvider =
     StateNotifierProvider<CurrentSplitNotifier, Split?>((ref) {
-  return CurrentSplitNotifier();
-});
+      return CurrentSplitNotifier();
+    });
 
 /// Computed provider for recent splits (last 5, sorted by date).
 final recentSplitsProvider = Provider<List<Split>>((ref) {
@@ -129,7 +130,12 @@ class CurrentSplitNotifier extends StateNotifier<Split?> {
   }
 
   /// Adds an item.
-  void addItem(String name, double price, {int quantity = 1}) {
+  void addItem(
+    String name,
+    double price, {
+    int quantity = 1,
+    String currency = "\$",
+  }) {
     if (state == null || name.trim().isEmpty || price <= 0 || quantity <= 0) {
       return;
     }
@@ -139,11 +145,10 @@ class CurrentSplitNotifier extends StateNotifier<Split?> {
       name: name.trim(),
       price: price,
       quantity: quantity,
+      currency: currency,
     );
 
-    state = state!.copyWith(
-      items: [...state!.items, item],
-    );
+    state = state!.copyWith(items: [...state!.items, item]);
   }
 
   /// Removes an item.

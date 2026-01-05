@@ -24,6 +24,7 @@ mixin _$Item {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   double get price => throw _privateConstructorUsedError;
+  String get currency => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
   List<String> get assignedTo => throw _privateConstructorUsedError;
 
@@ -45,6 +46,7 @@ abstract class $ItemCopyWith<$Res> {
     String id,
     String name,
     double price,
+    String currency,
     int quantity,
     List<String> assignedTo,
   });
@@ -68,6 +70,7 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
     Object? id = null,
     Object? name = null,
     Object? price = null,
+    Object? currency = null,
     Object? quantity = null,
     Object? assignedTo = null,
   }) {
@@ -85,6 +88,10 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
                 ? _value.price
                 : price // ignore: cast_nullable_to_non_nullable
                       as double,
+            currency: null == currency
+                ? _value.currency
+                : currency // ignore: cast_nullable_to_non_nullable
+                      as String,
             quantity: null == quantity
                 ? _value.quantity
                 : quantity // ignore: cast_nullable_to_non_nullable
@@ -111,6 +118,7 @@ abstract class _$$ItemImplCopyWith<$Res> implements $ItemCopyWith<$Res> {
     String id,
     String name,
     double price,
+    String currency,
     int quantity,
     List<String> assignedTo,
   });
@@ -131,6 +139,7 @@ class __$$ItemImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? price = null,
+    Object? currency = null,
     Object? quantity = null,
     Object? assignedTo = null,
   }) {
@@ -148,6 +157,10 @@ class __$$ItemImplCopyWithImpl<$Res>
             ? _value.price
             : price // ignore: cast_nullable_to_non_nullable
                   as double,
+        currency: null == currency
+            ? _value.currency
+            : currency // ignore: cast_nullable_to_non_nullable
+                  as String,
         quantity: null == quantity
             ? _value.quantity
             : quantity // ignore: cast_nullable_to_non_nullable
@@ -168,6 +181,7 @@ class _$ItemImpl implements _Item {
     required this.id,
     required this.name,
     required this.price,
+    this.currency = "\$",
     this.quantity = 1,
     final List<String> assignedTo = const [],
   }) : _assignedTo = assignedTo;
@@ -183,6 +197,9 @@ class _$ItemImpl implements _Item {
   final double price;
   @override
   @JsonKey()
+  final String currency;
+  @override
+  @JsonKey()
   final int quantity;
   final List<String> _assignedTo;
   @override
@@ -195,7 +212,7 @@ class _$ItemImpl implements _Item {
 
   @override
   String toString() {
-    return 'Item(id: $id, name: $name, price: $price, quantity: $quantity, assignedTo: $assignedTo)';
+    return 'Item(id: $id, name: $name, price: $price, currency: $currency, quantity: $quantity, assignedTo: $assignedTo)';
   }
 
   @override
@@ -206,6 +223,8 @@ class _$ItemImpl implements _Item {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.price, price) || other.price == price) &&
+            (identical(other.currency, currency) ||
+                other.currency == currency) &&
             (identical(other.quantity, quantity) ||
                 other.quantity == quantity) &&
             const DeepCollectionEquality().equals(
@@ -221,6 +240,7 @@ class _$ItemImpl implements _Item {
     id,
     name,
     price,
+    currency,
     quantity,
     const DeepCollectionEquality().hash(_assignedTo),
   );
@@ -244,6 +264,7 @@ abstract class _Item implements Item {
     required final String id,
     required final String name,
     required final double price,
+    final String currency,
     final int quantity,
     final List<String> assignedTo,
   }) = _$ItemImpl;
@@ -256,6 +277,8 @@ abstract class _Item implements Item {
   String get name;
   @override
   double get price;
+  @override
+  String get currency;
   @override
   int get quantity;
   @override

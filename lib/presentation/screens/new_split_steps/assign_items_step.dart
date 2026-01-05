@@ -17,10 +17,8 @@ class AssignItemsStep extends ConsumerWidget {
 
   void _handleNext(BuildContext context, WidgetRef ref) {
     final split = ref.read(currentSplitProvider);
-    final unassignedItems = split?.items
-            .where((item) => item.assignedTo.isEmpty)
-            .toList() ??
-        [];
+    final unassignedItems =
+        split?.items.where((item) => item.assignedTo.isEmpty).toList() ?? [];
 
     if (unassignedItems.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,20 +49,20 @@ class AssignItemsStep extends ConsumerWidget {
           Text(
             'Assign Items',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.5,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'Who had what?',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  height: 1.5,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 32),
-          
+
           // Split Method Toggle
           FrostedCard(
             margin: EdgeInsets.zero,
@@ -75,8 +73,8 @@ class AssignItemsStep extends ConsumerWidget {
                 Text(
                   'Split Method',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 SegmentedButton<SplitMethod>(
@@ -85,33 +83,32 @@ class AssignItemsStep extends ConsumerWidget {
                       value: SplitMethod.itemized,
                       label: Text('Itemized'),
                     ),
-                    ButtonSegment(
-                      value: SplitMethod.even,
-                      label: Text('Even'),
-                    ),
+                    ButtonSegment(value: SplitMethod.even, label: Text('Even')),
                   ],
                   selected: {split.method},
                   onSelectionChanged: (Set<SplitMethod> newSelection) {
                     if (newSelection.first != split.method) {
-                      ref.read(currentSplitProvider.notifier).toggleSplitMethod();
+                      ref
+                          .read(currentSplitProvider.notifier)
+                          .toggleSplitMethod();
                     }
                   },
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // Items List
           Text(
             'Items (${split.items.length})',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
-          
+
           ...split.items.map((item) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -127,14 +124,14 @@ class AssignItemsStep extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             item.name,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         ),
                         Text(
-                          '\$${(item.price * item.quantity).toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          '${item.currency}${(item.price * item.quantity).toStringAsFixed(2)}',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
@@ -144,10 +141,10 @@ class AssignItemsStep extends ConsumerWidget {
                     if (item.quantity > 1) ...[
                       const SizedBox(height: 4),
                       Text(
-                        '${item.quantity}x \$${item.price.toStringAsFixed(2)}',
+                        '${item.quantity}x ${item.currency}${item.price.toStringAsFixed(2)}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                     const SizedBox(height: 16),
@@ -155,12 +152,16 @@ class AssignItemsStep extends ConsumerWidget {
                       spacing: 10,
                       runSpacing: 10,
                       children: split.participants.map((participant) {
-                        final isAssigned = item.assignedTo.contains(participant.id);
+                        final isAssigned = item.assignedTo.contains(
+                          participant.id,
+                        );
                         return FilterChip(
                           label: Text(participant.name),
                           selected: isAssigned,
                           onSelected: (selected) {
-                            final newAssignments = List<String>.from(item.assignedTo);
+                            final newAssignments = List<String>.from(
+                              item.assignedTo,
+                            );
                             if (selected) {
                               if (!newAssignments.contains(participant.id)) {
                                 newAssignments.add(participant.id);
@@ -172,8 +173,12 @@ class AssignItemsStep extends ConsumerWidget {
                                 .read(currentSplitProvider.notifier)
                                 .updateItemAssignment(item.id, newAssignments);
                           },
-                          selectedColor: Theme.of(context).colorScheme.primaryContainer,
-                          checkmarkColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                          selectedColor: Theme.of(
+                            context,
+                          ).colorScheme.primaryContainer,
+                          checkmarkColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
                         );
                       }).toList(),
                     ),
@@ -182,9 +187,9 @@ class AssignItemsStep extends ConsumerWidget {
               ),
             );
           }),
-          
+
           const SizedBox(height: 48),
-          
+
           // Navigation Buttons
           Row(
             children: [
@@ -216,7 +221,7 @@ class AssignItemsStep extends ConsumerWidget {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 24),
         ],
       ),
