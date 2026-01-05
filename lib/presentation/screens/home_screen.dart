@@ -44,9 +44,9 @@ class HomeScreen extends ConsumerWidget {
                 Text(
                   'Split a bill\nin seconds',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        height: 1.2,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    height: 1.2,
+                  ),
                 ),
                 const SizedBox(height: 48),
                 // Start New Split Button (Primary Action)
@@ -87,6 +87,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 48),
+
                 // Recent Splits Section
                 if (recentSplits.isNotEmpty) ...[
                   Text(
@@ -112,21 +113,19 @@ class HomeScreen extends ConsumerWidget {
                                 Expanded(
                                   child: Text(
                                     split.name ?? 'Unnamed Split',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
                                 ),
                                 Text(
                                   _formatPrice(total),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                       ),
                                 ),
                               ],
@@ -134,13 +133,11 @@ class HomeScreen extends ConsumerWidget {
                             const SizedBox(height: 8),
                             Text(
                               _formatDate(split.createdAt),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                             ),
                           ],
@@ -153,6 +150,13 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ),
+
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/new-bill'),
+        icon: const Icon(Icons.receipt_long),
+        label: const Text('New Bill'),
+        tooltip: 'Create Manual Bill',
       ),
     );
   }
