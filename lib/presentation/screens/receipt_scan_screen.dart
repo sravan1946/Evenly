@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import '../../domain/services/camera_service.dart';
+import '../../state/providers/split_providers.dart';
 
 /// Screen for scanning receipts using camera
 class ReceiptScanScreen extends ConsumerStatefulWidget {
@@ -14,8 +16,16 @@ class ReceiptScanScreen extends ConsumerStatefulWidget {
 
 class _ReceiptScanScreenState extends ConsumerState<ReceiptScanScreen> {
   final CameraService _cameraService = CameraService();
+  final TextRecognizer _textRecognizer = TextRecognizer();
+
   File? _capturedImage;
   bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _textRecognizer.close();
+    super.dispose();
+  }
 
   Future<void> _captureFromCamera() async {
     setState(() {
@@ -77,23 +87,87 @@ class _ReceiptScanScreenState extends ConsumerState<ReceiptScanScreen> {
     }
   }
 
-  void _confirmImage() {
-    if (_capturedImage != null) {
-      // TODO: In future, this will process the image with OCR
-      // For now, we'll just navigate to the new split flow
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Receipt captured! OCR processing will be added in a future update.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+  Future<void> _processAndConfirmImage() async {
+    if (_capturedImage == null) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final inputImage = InputImage.fromFile(_capturedImage!);
+      final recognizedText = await _textRecognizer.processImage(inputImage);
+
+      // Start a new split
+      ref.read(currentSplitProvider.notifier).startNewSplit();
+
+      int itemsFound = 0;
       
-      // Navigate to new split flow after a short delay
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          context.go('/new-split');
+      // Simple heuristic parsing
+      // Iterating through blocks -> lines
+      for (TextBlock block in recognizedText.blocks) {
+        for (TextLine line in block.lines) {
+          final text = line.text;
+          // Regex to find price at the end of the line (e.g., "Burger 12.99" or "12.99")
+          final priceRegex = RegExp(r'(\d+[.,]\d{2})\s*$');
+          final match = priceRegex.firstMatch(text);
+
+          if (match != null) {
+            final priceStr = match.group(1)?.replaceAll(',', '.') ?? '0';
+            final price = double.tryParse(priceStr);
+
+            if (price != null) {
+              // Extract name (everything before the price)
+              String name = text.substring(0, match.start).trim();
+              if (name.isEmpty) {
+                name = "Item ${itemsFound + 1}";
+              }
+              
+              // Filter out common receipt noise if needed
+              if (name.length > 2) {
+                 ref.read(currentSplitProvider.notifier).addItem(name, price);
+                 itemsFound++;
+              }
+            }
+          }
         }
-      });
+      }
+
+      if (mounted) {
+        if (itemsFound > 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Found $itemsFound items!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+           ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not detect specific items. You can add them manually.'),
+            ),
+          );
+        }
+        
+        // Navigate to new split flow
+        context.go('/new-split');
+      }
+
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error processing receipt: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -114,8 +188,18 @@ class _ReceiptScanScreenState extends ConsumerState<ReceiptScanScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                   const CircularProgressIndicator(),
+                   const SizedBox(height: 16),
+                   Text(
+                     'Processing Receipt...',
+                     style: Theme.of(context).textTheme.bodyLarge,
+                   ),
+                ],
+              ),
             )
           : _capturedImage == null
               ? _buildCaptureOptions()
@@ -225,13 +309,13 @@ class _ReceiptScanScreenState extends ConsumerState<ReceiptScanScreen> {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.info_outline,
+                          Icons.auto_awesome,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'OCR processing will be added in a future update',
+                            'AI will automatically detect items and prices from this image.',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: Theme.of(context).colorScheme.onPrimaryContainer,
                                 ),
@@ -272,9 +356,9 @@ class _ReceiptScanScreenState extends ConsumerState<ReceiptScanScreen> {
                 Expanded(
                   flex: 2,
                   child: ElevatedButton.icon(
-                    onPressed: _confirmImage,
+                    onPressed: _processAndConfirmImage,
                     icon: const Icon(Icons.check),
-                    label: const Text('Confirm & Continue'),
+                    label: const Text('Scan & Continue'),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
