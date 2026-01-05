@@ -25,6 +25,8 @@ mixin _$SavedPerson {
   String get name => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   int get useCount => throw _privateConstructorUsedError;
+
+  /// Avatar color stored as hex value (e.g., 0xFF6366F1)
   int? get avatarColor => throw _privateConstructorUsedError;
 
   /// Serializes this SavedPerson to a JSON map.
@@ -44,7 +46,13 @@ abstract class $SavedPersonCopyWith<$Res> {
     $Res Function(SavedPerson) then,
   ) = _$SavedPersonCopyWithImpl<$Res, SavedPerson>;
   @useResult
-  $Res call({String id, String name, DateTime createdAt, int useCount, int? avatarColor});
+  $Res call({
+    String id,
+    String name,
+    DateTime createdAt,
+    int useCount,
+    int? avatarColor,
+  });
 }
 
 /// @nodoc
@@ -66,7 +74,7 @@ class _$SavedPersonCopyWithImpl<$Res, $Val extends SavedPerson>
     Object? name = null,
     Object? createdAt = null,
     Object? useCount = null,
-    Object? avatarColor = null,
+    Object? avatarColor = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -86,9 +94,10 @@ class _$SavedPersonCopyWithImpl<$Res, $Val extends SavedPerson>
                 ? _value.useCount
                 : useCount // ignore: cast_nullable_to_non_nullable
                       as int,
-            avatarColor: null == avatarColor
+            avatarColor: freezed == avatarColor
                 ? _value.avatarColor
-                : avatarColor as int?,
+                : avatarColor // ignore: cast_nullable_to_non_nullable
+                      as int?,
           )
           as $Val,
     );
@@ -104,7 +113,13 @@ abstract class _$$SavedPersonImplCopyWith<$Res>
   ) = __$$SavedPersonImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, DateTime createdAt, int useCount, int? avatarColor});
+  $Res call({
+    String id,
+    String name,
+    DateTime createdAt,
+    int useCount,
+    int? avatarColor,
+  });
 }
 
 /// @nodoc
@@ -125,7 +140,7 @@ class __$$SavedPersonImplCopyWithImpl<$Res>
     Object? name = null,
     Object? createdAt = null,
     Object? useCount = null,
-    Object? avatarColor = null,
+    Object? avatarColor = freezed,
   }) {
     return _then(
       _$SavedPersonImpl(
@@ -145,9 +160,10 @@ class __$$SavedPersonImplCopyWithImpl<$Res>
             ? _value.useCount
             : useCount // ignore: cast_nullable_to_non_nullable
                   as int,
-        avatarColor: null == avatarColor
+        avatarColor: freezed == avatarColor
             ? _value.avatarColor
-            : avatarColor as int?,
+            : avatarColor // ignore: cast_nullable_to_non_nullable
+                  as int?,
       ),
     );
   }
@@ -176,6 +192,8 @@ class _$SavedPersonImpl implements _SavedPerson {
   @override
   @JsonKey()
   final int useCount;
+
+  /// Avatar color stored as hex value (e.g., 0xFF6366F1)
   @override
   final int? avatarColor;
 
@@ -201,7 +219,8 @@ class _$SavedPersonImpl implements _SavedPerson {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, createdAt, useCount, avatarColor);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, createdAt, useCount, avatarColor);
 
   /// Create a copy of SavedPerson
   /// with the given fields replaced by the non-null parameter values.
@@ -237,6 +256,8 @@ abstract class _SavedPerson implements SavedPerson {
   DateTime get createdAt;
   @override
   int get useCount;
+
+  /// Avatar color stored as hex value (e.g., 0xFF6366F1)
   @override
   int? get avatarColor;
 

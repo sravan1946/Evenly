@@ -8,14 +8,12 @@ class SplitSummaryCard extends StatelessWidget {
     super.key,
     required this.participant,
     required this.amount,
+    this.currency = '\$',
   });
 
   final Participant participant;
+  final String currency;
   final double amount;
-
-  String _formatPrice(double price) {
-    return '\$${price.toStringAsFixed(2)}';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,26 +30,26 @@ class SplitSummaryCard extends StatelessWidget {
                 Text(
                   participant.name,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Owes',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
           ),
           Text(
-            _formatPrice(amount),
+            "$currency$amount",
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                  letterSpacing: -0.5,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+              letterSpacing: -0.5,
+            ),
           ),
         ],
       ),

@@ -19,9 +19,10 @@ class FrostedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     final card = Container(
       margin: margin ?? const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [

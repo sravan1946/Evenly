@@ -1,3 +1,4 @@
+import 'package:evenly/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,10 +10,6 @@ import '../widgets/frosted_card.dart';
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
-  String _formatPrice(double price) {
-    return '\$${price.toStringAsFixed(2)}';
-  }
-
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
@@ -20,7 +17,7 @@ class HistoryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final splits = ref.watch(splitsProvider);
-    final sortedSplits = List.from(splits)
+    final sortedSplits = splits
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return Scaffold(
@@ -55,15 +52,15 @@ class HistoryScreen extends ConsumerWidget {
                   Text(
                     'No splits yet',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Create your first split to get started',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -73,6 +70,7 @@ class HistoryScreen extends ConsumerWidget {
               itemCount: sortedSplits.length,
               itemBuilder: (context, index) {
                 final split = sortedSplits[index];
+                final currency = split.items[0].currency;
                 final total = split.items.fold(
                   0.0,
                   (sum, item) => sum + item.price,
@@ -94,14 +92,13 @@ class HistoryScreen extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              _formatPrice(total),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              "$currency$total",
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                             ),
                           ],
@@ -112,24 +109,20 @@ class HistoryScreen extends ConsumerWidget {
                           children: [
                             Text(
                               _formatDate(split.createdAt),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                             ),
                             Text(
                               '${split.participants.length} people • ${split.items.length} items',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                             ),
                           ],

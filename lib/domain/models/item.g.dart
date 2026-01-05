@@ -10,6 +10,7 @@ _$ItemImpl _$$ItemImplFromJson(Map<String, dynamic> json) => _$ItemImpl(
   id: json['id'] as String,
   name: json['name'] as String,
   price: (json['price'] as num).toDouble(),
+  currency: json['currency'] as String? ?? "\$",
   quantity: (json['quantity'] as num?)?.toInt() ?? 1,
   assignedTo:
       (json['assignedTo'] as List<dynamic>?)
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$ItemImplToJson(_$ItemImpl instance) =>
       'id': instance.id,
       'name': instance.name,
       'price': instance.price,
+      'currency': instance.currency,
       'quantity': instance.quantity,
       'assignedTo': instance.assignedTo,
     };

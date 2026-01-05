@@ -8,10 +8,6 @@ import '../widgets/frosted_card.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  String _formatPrice(double price) {
-    return '\$${price.toStringAsFixed(2)}';
-  }
-
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
@@ -113,6 +109,8 @@ class HomeScreen extends ConsumerWidget {
                       0.0,
                       (sum, item) => sum + item.price,
                     );
+
+                    final currency = split.items.first.currency;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: FrostedCard(
@@ -132,7 +130,7 @@ class HomeScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 Text(
-                                  _formatPrice(total),
+                                  "$currency$total",
                                   style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(
                                         fontWeight: FontWeight.bold,
