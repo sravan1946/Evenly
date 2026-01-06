@@ -5,10 +5,10 @@ import '../../data/local/hive_service.dart';
 /// Provider for app preferences.
 final preferencesProvider =
     StateNotifierProvider<PreferencesNotifier, AppPreferences>((ref) {
-  final notifier = PreferencesNotifier();
-  notifier.loadPreferences();
-  return notifier;
-});
+      final notifier = PreferencesNotifier();
+      notifier.loadPreferences();
+      return notifier;
+    });
 
 /// State notifier for managing preferences.
 class PreferencesNotifier extends StateNotifier<AppPreferences> {
@@ -37,6 +37,12 @@ class PreferencesNotifier extends StateNotifier<AppPreferences> {
   /// Updates rounding preference.
   Future<void> setRounding(String rounding) async {
     state = state.copyWith(rounding: rounding);
+    await _saveToStorage();
+  }
+
+  /// Updates upi id preference.
+  Future<void> setUPI(String upi) async {
+    state = state.copyWith(upiId: upi);
     await _saveToStorage();
   }
 

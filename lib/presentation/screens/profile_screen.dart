@@ -5,9 +5,15 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../state/providers/preferences_providers.dart';
 import '../widgets/frosted_card.dart';
 
-/// Profile screen with preferences and about section.
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final _upiController = TextEditingController();
 
   String _getThemeDisplay(String theme) {
     switch (theme) {
@@ -49,23 +55,39 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void dispose() {
+    _upiController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final preferences = ref.watch(preferencesProvider);
 
+    void addUPI() {
+      final upi = _upiController.text;
+      if (upi.trim().isNotEmpty) {
+        ref.read(preferencesProvider.notifier).setUPI(upi);
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('saved your UPI ID'),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-      ),
+      appBar: AppBar(title: const Text('Profile')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Preferences Section
-            Text(
-              'Preferences',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text('Preferences', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             FrostedCard(
               padding: const EdgeInsets.all(16),
@@ -121,6 +143,59 @@ class ProfileScreen extends ConsumerWidget {
                                     Navigator.pop(context);
                                   }
                                 },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    title: const Text('UPI ID'),
+                    subtitle: Text(preferences.upiId ?? "NOT SET"),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Set UPI ID'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: _upiController,
+                                decoration: InputDecoration(
+                                  labelText: 'Your UPI ID',
+                                  hintText: 'name@upi',
+                                  border: const OutlineInputBorder(),
+                                  prefixIcon: const Icon(Icons.code),
+                                  suffixIcon: _upiController.text.isNotEmpty
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () {
+                                            _upiController.clear();
+                                            setState(() {});
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                onChanged: (_) => setState(() {}),
+                                onSubmitted: (_) => addUPI(),
+                              ),
+
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: addUPI,
+                                  label: const Text('Save'),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -271,20 +346,14 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             // About Section
-            Text(
-              'About',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text('About', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             FrostedCard(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Evenly',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                  Text('Evenly', style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
                   Text(
                     'An offline-first, privacy-focused receipt splitting app.',
@@ -297,9 +366,14 @@ class ProfileScreen extends ConsumerWidget {
                     subtitle: const Text('View on GitHub'),
                     leading: const Icon(Icons.code),
                     onTap: () async {
-                      final url = Uri.parse('https://github.com/sravan1946/Evenly');
+                      final url = Uri.parse(
+                        'https://github.com/sravan1946/Evenly',
+                      );
                       if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                        await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                   ),

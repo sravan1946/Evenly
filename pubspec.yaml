@@ -20,6 +20,8 @@ dependencies:
   url_launcher: ^6.2.5
   image_picker: ^1.0.7
   permission_handler: ^11.3.0
+  qr: ^3.0.2
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

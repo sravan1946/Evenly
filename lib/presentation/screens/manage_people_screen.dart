@@ -31,10 +31,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
   void _addPerson() {
     final name = _nameController.text;
     if (name.trim().isNotEmpty) {
-      ref.read(savedPeopleProvider.notifier).addPersonByName(
-        name,
-        customColor: _selectedColor,
-      );
+      ref
+          .read(savedPeopleProvider.notifier)
+          .addPersonByName(name, customColor: _selectedColor);
       _nameController.clear();
       setState(() {
         _selectedColor = null;
@@ -110,7 +109,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outline.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -118,9 +119,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                 const SizedBox(height: 24),
                 Text(
                   'Edit Friend',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 24),
                 // Preview avatar
@@ -128,7 +129,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                   child: FriendAvatar(
                     person: SavedPerson(
                       id: person.id,
-                      name: editController.text.isEmpty ? person.name : editController.text,
+                      name: editController.text.isEmpty
+                          ? person.name
+                          : editController.text,
                       createdAt: person.createdAt,
                       avatarColor: editColor,
                     ),
@@ -177,7 +180,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                               shape: BoxShape.circle,
                               border: isSelected
                                   ? Border.all(
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                       width: 3,
                                     )
                                   : null,
@@ -192,7 +197,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                             child: isSelected
                                 ? Icon(
                                     Icons.check,
-                                    color: AvatarColors.getContrastingTextColor(color),
+                                    color: AvatarColors.getContrastingTextColor(
+                                      color,
+                                    ),
                                     size: 20,
                                   )
                                 : null,
@@ -221,11 +228,13 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (editController.text.trim().isNotEmpty) {
-                            ref.read(savedPeopleProvider.notifier).updatePerson(
-                              id: person.id,
-                              name: editController.text.trim(),
-                              avatarColor: editColor,
-                            );
+                            ref
+                                .read(savedPeopleProvider.notifier)
+                                .updatePerson(
+                                  id: person.id,
+                                  name: editController.text.trim(),
+                                  avatarColor: editColor,
+                                );
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -254,8 +263,18 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
@@ -266,8 +285,11 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
     final filteredPeople = _searchQuery.isEmpty
         ? savedPeople
         : savedPeople
-            .where((p) => p.name.toLowerCase().contains(_searchQuery.toLowerCase()))
-            .toList();
+              .where(
+                (p) =>
+                    p.name.toLowerCase().contains(_searchQuery.toLowerCase()),
+              )
+              .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -327,15 +349,17 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                           children: [
                             Text(
                               'Add New Friend',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Add friends for quick bill splitting',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                             ),
                           ],
                         ),
@@ -397,7 +421,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                                 shape: BoxShape.circle,
                                 border: isSelected
                                     ? Border.all(
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                         width: 3,
                                       )
                                     : null,
@@ -405,7 +431,10 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                               child: isSelected
                                   ? Icon(
                                       Icons.check,
-                                      color: AvatarColors.getContrastingTextColor(color),
+                                      color:
+                                          AvatarColors.getContrastingTextColor(
+                                            color,
+                                          ),
                                       size: 18,
                                     )
                                   : null,
@@ -440,9 +469,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
               children: [
                 Text(
                   'Your Friends',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 FriendCountBadge(count: savedPeople.length),
               ],
@@ -460,7 +489,9 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                             ? Icons.search_off
                             : Icons.people_outline,
                         size: 64,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurfaceVariant.withOpacity(0.5),
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -476,9 +507,12 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                         const SizedBox(height: 8),
                         Text(
                           'Add your first friend above!',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                              ),
                         ),
                       ],
                     ],
@@ -494,10 +528,7 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                     child: Row(
                       children: [
                         // Avatar
-                        FriendAvatar(
-                          person: person,
-                          size: 56,
-                        ),
+                        FriendAvatar(person: person, size: 56),
                         const SizedBox(width: 16),
                         // Info
                         Expanded(
@@ -506,9 +537,8 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                             children: [
                               Text(
                                 person.name,
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
                               ),
                               const SizedBox(height: 4),
                               Row(
@@ -516,27 +546,37 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
                                   Icon(
                                     Icons.receipt_long,
                                     size: 14,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     '${person.useCount} split${person.useCount != 1 ? 's' : ''}',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                    ),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
                                   ),
                                   const SizedBox(width: 12),
                                   Icon(
                                     Icons.calendar_today,
                                     size: 14,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     _formatDate(person.createdAt),
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                    ),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -590,7 +630,7 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
 
   void _showQuickAddDialog() {
     final quickNameController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -643,4 +683,3 @@ class _ManagePeopleScreenState extends ConsumerState<ManagePeopleScreen> {
     );
   }
 }
-
