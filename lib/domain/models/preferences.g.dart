@@ -11,6 +11,7 @@ _$AppPreferencesImpl _$$AppPreferencesImplFromJson(Map<String, dynamic> json) =>
       theme: json['theme'] as String? ?? 'system',
       currency: json['currency'] as String? ?? 'USD',
       rounding: json['rounding'] as String? ?? 'cent',
+      upiId: json['upiId'] as String?,
     );
 
 Map<String, dynamic> _$$AppPreferencesImplToJson(
@@ -19,4 +20,5 @@ Map<String, dynamic> _$$AppPreferencesImplToJson(
   'theme': instance.theme,
   'currency': instance.currency,
   'rounding': instance.rounding,
+  'upiId': instance.upiId,
 };

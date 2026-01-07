@@ -12,10 +12,6 @@ class SplitDetailScreen extends ConsumerWidget {
 
   final String splitId;
 
-  String _formatPrice(double price) {
-    return '\$${price.toStringAsFixed(2)}';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final splits = ref.watch(splitsProvider);

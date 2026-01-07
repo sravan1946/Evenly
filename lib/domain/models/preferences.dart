@@ -10,6 +10,7 @@ class AppPreferences with _$AppPreferences {
     @Default('system') String theme,
     @Default('USD') String currency,
     @Default('cent') String rounding,
+    String? upiId,
   }) = _AppPreferences;
 
   factory AppPreferences.fromJson(Map<String, dynamic> json) =>
