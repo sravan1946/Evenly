@@ -59,34 +59,37 @@ class SplitSummaryCard extends ConsumerWidget {
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Pay to me with UPI"),
-                  Text(
-                    preferences.upiId ?? "UPI ID NOT SET",
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(fontSize: 16),
-                  ),
-                ],
-              ),
-              Visibility(
-                visible: currency == "₹",
-                child: QrImageView(
+          Visibility(
+            visible: currency == "₹" && preferences.upiId != null,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Pay to me with UPI"),
+                    Text(
+                      preferences.upiId ?? "UPI ID NOT SET",
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(fontSize: 16),
+                    ),
+                  ],
+                ),
+                QrImageView(
                   data: 'upi://pay?pa=${preferences.upiId}&am=$amount&cu=INR',
                   version: QrVersions.auto,
-                  foregroundColor: Theme.of(
-                    context,
-                  ).textTheme.displaySmall?.color,
+                  dataModuleStyle: QrDataModuleStyle(
+                    color: Theme.of(context).textTheme.displayMedium?.color,
+                  ),
+                  eyeStyle: QrEyeStyle(
+                    color: Theme.of(context).textTheme.displayMedium?.color,
+                  ),
                   size: 100.0,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

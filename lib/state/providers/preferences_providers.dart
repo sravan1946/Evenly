@@ -46,6 +46,11 @@ class PreferencesNotifier extends StateNotifier<AppPreferences> {
     await _saveToStorage();
   }
 
+  Future<void> removeUPI() async {
+    state = state.copyWith(upiId: null);
+    await _saveToStorage();
+  }
+
   Future<void> _saveToStorage() async {
     await HiveService.savePreferences(state.toJson());
   }

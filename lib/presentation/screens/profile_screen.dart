@@ -12,6 +12,100 @@ class ProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ProfileScreenState();
 }
 
+Future<void> _displayUPIForm(
+  BuildContext context,
+  TextEditingController controller,
+  String? upiId,
+  VoidCallback onSave,
+  VoidCallback onDelete,
+) async {
+  bool editUPI = false;
+
+  // void save() {}
+
+  return showDialog<void>(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (BuildContext context, StateSetter setInnerState) {
+        return AlertDialog(
+          title: const Text('Set UPI ID'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  upiId ?? "NOT SET",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontSize: 16),
+                ),
+              ),
+              Visibility(
+                visible: editUPI,
+                replacement: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setInnerState(() {
+                        editUPI = true;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Text("Edit"),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        labelText: 'Your UPI ID',
+                        hintText: 'name@upi',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.code),
+                      ),
+                      onSubmitted: (_) => onSave(),
+                    ),
+
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: onSave,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: Text("Save"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Visibility(
+                visible: upiId != null,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: onDelete,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Text("Delete"),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _upiController = TextEditingController();
 
@@ -77,6 +171,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         );
       }
+      _upiController.clear();
+    }
+
+    void removeUPI() {
+      ref.read(preferencesProvider.notifier).removeUPI();
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('UPI ID removed'),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
 
     return Scaffold(
@@ -155,53 +262,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     title: const Text('UPI ID'),
                     subtitle: Text(preferences.upiId ?? "NOT SET"),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Set UPI ID'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              TextField(
-                                controller: _upiController,
-                                decoration: InputDecoration(
-                                  labelText: 'Your UPI ID',
-                                  hintText: 'name@upi',
-                                  border: const OutlineInputBorder(),
-                                  prefixIcon: const Icon(Icons.code),
-                                  suffixIcon: _upiController.text.isNotEmpty
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear),
-                                          onPressed: () {
-                                            _upiController.clear();
-                                            setState(() {});
-                                          },
-                                        )
-                                      : null,
-                                ),
-                                onChanged: (_) => setState(() {}),
-                                onSubmitted: (_) => addUPI(),
-                              ),
-
-                              const SizedBox(height: 12),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  onPressed: addUPI,
-                                  label: const Text('Save'),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    onTap: () => _displayUPIForm(
+                      context,
+                      _upiController,
+                      preferences.upiId,
+                      addUPI,
+                      removeUPI,
+                    ),
                   ),
                   const Divider(),
                   ListTile(
