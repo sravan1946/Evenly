@@ -25,6 +25,8 @@ dependencies:
   printing: ^5.11.0
   fl_chart: ^0.66.0
   path_provider: ^2.1.1
+  qr: ^3.0.2
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

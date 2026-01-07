@@ -24,6 +24,7 @@ mixin _$AppPreferences {
   String get theme => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
   String get rounding => throw _privateConstructorUsedError;
+  String? get upiId => throw _privateConstructorUsedError;
 
   /// Serializes this AppPreferences to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +43,7 @@ abstract class $AppPreferencesCopyWith<$Res> {
     $Res Function(AppPreferences) then,
   ) = _$AppPreferencesCopyWithImpl<$Res, AppPreferences>;
   @useResult
-  $Res call({String theme, String currency, String rounding});
+  $Res call({String theme, String currency, String rounding, String? upiId});
 }
 
 /// @nodoc
@@ -63,6 +64,7 @@ class _$AppPreferencesCopyWithImpl<$Res, $Val extends AppPreferences>
     Object? theme = null,
     Object? currency = null,
     Object? rounding = null,
+    Object? upiId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -78,6 +80,10 @@ class _$AppPreferencesCopyWithImpl<$Res, $Val extends AppPreferences>
                 ? _value.rounding
                 : rounding // ignore: cast_nullable_to_non_nullable
                       as String,
+            upiId: freezed == upiId
+                ? _value.upiId
+                : upiId // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -93,7 +99,7 @@ abstract class _$$AppPreferencesImplCopyWith<$Res>
   ) = __$$AppPreferencesImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String theme, String currency, String rounding});
+  $Res call({String theme, String currency, String rounding, String? upiId});
 }
 
 /// @nodoc
@@ -113,6 +119,7 @@ class __$$AppPreferencesImplCopyWithImpl<$Res>
     Object? theme = null,
     Object? currency = null,
     Object? rounding = null,
+    Object? upiId = freezed,
   }) {
     return _then(
       _$AppPreferencesImpl(
@@ -128,6 +135,10 @@ class __$$AppPreferencesImplCopyWithImpl<$Res>
             ? _value.rounding
             : rounding // ignore: cast_nullable_to_non_nullable
                   as String,
+        upiId: freezed == upiId
+            ? _value.upiId
+            : upiId // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -140,6 +151,7 @@ class _$AppPreferencesImpl implements _AppPreferences {
     this.theme = 'system',
     this.currency = 'USD',
     this.rounding = 'cent',
+    this.upiId,
   });
 
   factory _$AppPreferencesImpl.fromJson(Map<String, dynamic> json) =>
@@ -154,10 +166,12 @@ class _$AppPreferencesImpl implements _AppPreferences {
   @override
   @JsonKey()
   final String rounding;
+  @override
+  final String? upiId;
 
   @override
   String toString() {
-    return 'AppPreferences(theme: $theme, currency: $currency, rounding: $rounding)';
+    return 'AppPreferences(theme: $theme, currency: $currency, rounding: $rounding, upiId: $upiId)';
   }
 
   @override
@@ -169,12 +183,14 @@ class _$AppPreferencesImpl implements _AppPreferences {
             (identical(other.currency, currency) ||
                 other.currency == currency) &&
             (identical(other.rounding, rounding) ||
-                other.rounding == rounding));
+                other.rounding == rounding) &&
+            (identical(other.upiId, upiId) || other.upiId == upiId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, theme, currency, rounding);
+  int get hashCode =>
+      Object.hash(runtimeType, theme, currency, rounding, upiId);
 
   /// Create a copy of AppPreferences
   /// with the given fields replaced by the non-null parameter values.
@@ -198,6 +214,7 @@ abstract class _AppPreferences implements AppPreferences {
     final String theme,
     final String currency,
     final String rounding,
+    final String? upiId,
   }) = _$AppPreferencesImpl;
 
   factory _AppPreferences.fromJson(Map<String, dynamic> json) =
@@ -209,6 +226,8 @@ abstract class _AppPreferences implements AppPreferences {
   String get currency;
   @override
   String get rounding;
+  @override
+  String? get upiId;
 
   /// Create a copy of AppPreferences
   /// with the given fields replaced by the non-null parameter values.

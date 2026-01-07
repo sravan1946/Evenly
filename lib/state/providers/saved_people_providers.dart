@@ -6,10 +6,10 @@ import '../../core/utils/avatar_colors.dart';
 /// Provider for saved people/friends.
 final savedPeopleProvider =
     StateNotifierProvider<SavedPeopleNotifier, List<SavedPerson>>((ref) {
-  final notifier = SavedPeopleNotifier();
-  notifier.loadPeople();
-  return notifier;
-});
+      final notifier = SavedPeopleNotifier();
+      notifier.loadPeople();
+      return notifier;
+    });
 
 /// State notifier for managing saved friends.
 class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
@@ -18,9 +18,7 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
   /// Loads saved people from storage.
   void loadPeople() {
     final jsonList = HiveService.loadPeople();
-    state = jsonList
-        .map((json) => SavedPerson.fromJson(json))
-        .toList()
+    state = jsonList.map((json) => SavedPerson.fromJson(json)).toList()
       ..sort((a, b) => b.useCount.compareTo(a.useCount));
   }
 
@@ -45,16 +43,13 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
     final trimmedName = name.trim();
     final existing = state.firstWhere(
       (p) => p.name.toLowerCase() == trimmedName.toLowerCase(),
-      orElse: () => SavedPerson(
-        id: '',
-        name: '',
-        createdAt: DateTime.now(),
-      ),
+      orElse: () => SavedPerson(id: '', name: '', createdAt: DateTime.now()),
     );
 
     if (existing.id.isEmpty) {
       // New person - assign avatar color
-      final avatarColor = customColor ?? AvatarColors.getColorForName(trimmedName);
+      final avatarColor =
+          customColor ?? AvatarColors.getColorForName(trimmedName);
       final person = SavedPerson(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: trimmedName,
@@ -105,7 +100,9 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
   List<SavedPerson> searchByName(String query) {
     if (query.isEmpty) return state;
     final lowerQuery = query.toLowerCase();
-    return state.where((p) => p.name.toLowerCase().contains(lowerQuery)).toList();
+    return state
+        .where((p) => p.name.toLowerCase().contains(lowerQuery))
+        .toList();
   }
 
   Future<void> _saveToStorage() async {
@@ -113,4 +110,3 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
     await HiveService.savePeople(jsonList);
   }
 }
-

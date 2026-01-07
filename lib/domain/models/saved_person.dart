@@ -12,6 +12,7 @@ class SavedPerson with _$SavedPerson {
     required String name,
     required DateTime createdAt,
     @Default(0) int useCount,
+
     /// Avatar color stored as hex value (e.g., 0xFF6366F1)
     int? avatarColor,
   }) = _SavedPerson;
