@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../state/providers/split_providers.dart';
+import '../../domain/services/export_service.dart';
 import '../widgets/frosted_card.dart';
 
 /// History screen showing all past splits.
@@ -20,7 +21,23 @@ class HistoryScreen extends ConsumerWidget {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('History')),
+      appBar: AppBar(
+        title: const Text('History'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.download),
+            onPressed: () {
+              if (splits.isNotEmpty) {
+                ExportService().exportSplitsToPdf(splits);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No history to export')),
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: splits.isEmpty
           ? Center(
               child: Column(

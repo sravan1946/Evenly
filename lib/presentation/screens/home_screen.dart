@@ -82,6 +82,19 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 16),
+                // Statistics Button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/statistics'),
+                    icon: const Icon(Icons.bar_chart),
+                    label: const Text('View Statistics'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 48),
 
                 // Recent Splits Section
