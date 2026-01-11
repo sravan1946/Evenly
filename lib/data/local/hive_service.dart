@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../core/constants/app_constants.dart';
 import '../../domain/models/split.dart';
+import 'adapters.dart';
 
 /// Service for Hive local storage operations.
 class HiveService {
@@ -9,65 +10,77 @@ class HiveService {
 
   static Box? _box;
 
-  /// Initializes Hive and opens the splits box.
+  /// Initializes Hive, registers adapters, and opens the splits box.
   static Future<void> init() async {
     await Hive.initFlutter();
+
+    // Register Adapters
+    Hive.registerAdapter(ItemAdapter());
+    Hive.registerAdapter(ParticipantAdapter());
+    Hive.registerAdapter(SplitMethodAdapter());
+    Hive.registerAdapter(SplitAdapter());
+    
     _box = await Hive.openBox(AppConstants.splitsBoxName);
+    
+    // Migration: Check for old JSON list and convert to individual objects
+    if (_box!.containsKey(_splitsListKey)) {
+      await _migrateOldData();
+    }
   }
 
   static const String _splitsListKey = 'splits_list';
   static const String _savedPeopleKey = 'saved_people';
   static const String _preferencesKey = 'preferences';
 
-  /// Saves all splits to storage.
-  static Future<void> saveSplits(List<Split> splits) async {
-    if (_box == null) {
-      throw StateError('HiveService not initialized. Call init() first.');
-    }
-
-    final jsonList = splits.map((split) => split.toJson()).toList();
-    final jsonString = jsonEncode(jsonList);
-    await _box!.put(_splitsListKey, jsonString);
-  }
-
-  /// Loads all splits from storage.
-  static List<Split> loadSplits() {
-    if (_box == null) {
-      throw StateError('HiveService not initialized. Call init() first.');
-    }
-
+    /// Internal migration from JSON list to individual objects
+  static Future<void> _migrateOldData() async {
     final jsonString = _box!.get(_splitsListKey) as String?;
-    if (jsonString == null) {
-      return [];
-    }
-
-    try {
-      final jsonList = jsonDecode(jsonString) as List<dynamic>;
-      return jsonList
-          .map((json) => Split.fromJson(json as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      return [];
+    if (jsonString != null) {
+      try {
+        final jsonList = jsonDecode(jsonString) as List<dynamic>;
+        final splits = jsonList
+            .map((json) => Split.fromJson(json as Map<String, dynamic>))
+            .toList();
+        
+        // Save each split individually
+        for (final split in splits) {
+          await _box!.put(split.id, split);
+        }
+        
+        // Remove the old list key
+        await _box!.delete(_splitsListKey);
+      } catch (e) {
+        // Log error or ignore
+        print('Migration failed: $e');
+      }
     }
   }
 
   /// Saves a single split (adds or updates).
+  /// O(1) operation.
   static Future<void> saveSplit(Split split) async {
-    final splits = loadSplits();
-    final index = splits.indexWhere((s) => s.id == split.id);
-    if (index >= 0) {
-      splits[index] = split;
-    } else {
-      splits.add(split);
+    if (_box == null) {
+      throw StateError('HiveService not initialized. Call init() first.');
     }
-    await saveSplits(splits);
+    await _box!.put(split.id, split);
   }
 
+  /// Loads all splits from storage.
+  /// O(N) but much faster than JSON decoding.
+  static List<Split> loadSplits() {
+    if (_box == null) {
+      throw StateError('HiveService not initialized. Call init() first.');
+    }
+    return _box!.values.whereType<Split>().toList();
+    
+
   /// Deletes a split by ID.
+  /// O(1) operation.
   static Future<void> deleteSplit(String id) async {
-    final splits = loadSplits();
-    splits.removeWhere((s) => s.id == id);
-    await saveSplits(splits);
+    if (_box == null) {
+      throw StateError('HiveService not initialized. Call init() first.');
+    }
+    await _box!.delete(id);
   }
 
   // Saved People
