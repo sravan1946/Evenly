@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import '../../domain/models/saved_person.dart';
 import '../../data/local/hive_service.dart';
 import '../../core/utils/avatar_colors.dart';
@@ -51,7 +52,7 @@ class SavedPeopleNotifier extends StateNotifier<List<SavedPerson>> {
       final avatarColor =
           customColor ?? AvatarColors.getColorForName(trimmedName);
       final person = SavedPerson(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: const Uuid().v4(),
         name: trimmedName,
         createdAt: DateTime.now(),
         useCount: 1,

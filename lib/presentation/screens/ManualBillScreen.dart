@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Split;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../state/providers/split_providers.dart';
 import '../../domain/models/split.dart';
 import '../../domain/models/item.dart';
@@ -68,7 +69,7 @@ class _ManualBillScreenState extends ConsumerState<ManualBillScreen> {
       final amount = double.parse(_amountController.text.trim());
 
       final billItem = Item(
-        id: '${DateTime.now().millisecondsSinceEpoch}_item',
+        id: const Uuid().v4(),
         name: _titleController.text.trim(),
         price: amount,
         quantity: 1,
@@ -76,7 +77,7 @@ class _ManualBillScreenState extends ConsumerState<ManualBillScreen> {
       );
 
       final newSplit = Split(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: const Uuid().v4(),
         name: _titleController.text.trim(),
         createdAt: _selectedDate,
         items: [billItem],

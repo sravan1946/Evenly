@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import '../../domain/models/split.dart';
 import '../../domain/models/participant.dart';
 import '../../domain/models/item.dart';
@@ -78,7 +79,7 @@ class CurrentSplitNotifier extends StateNotifier<Split?> {
   /// Starts a new split.
   void startNewSplit({String? name}) {
     state = Split(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: const Uuid().v4(),
       name: name,
       createdAt: DateTime.now(),
     );
@@ -106,7 +107,7 @@ class CurrentSplitNotifier extends StateNotifier<Split?> {
     if (state == null || name.trim().isEmpty) return;
 
     final participant = Participant(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: const Uuid().v4(),
       name: name.trim(),
     );
 
@@ -141,7 +142,7 @@ class CurrentSplitNotifier extends StateNotifier<Split?> {
     }
 
     final item = Item(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: const Uuid().v4(),
       name: name.trim(),
       price: price,
       quantity: quantity,
